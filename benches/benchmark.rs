@@ -47,6 +47,18 @@ fn criterion_benchmarks(c: &mut Criterion) {
         b.iter(|| black_box(ring.iter().try_fold(0, |a, b| Some(a + b))))
     });
 
+    const N: usize = 1000;
+    let mut array: [usize; N] = [0; N];
+    for i in 0..N {
+        array[i] = i;
+    }
+    c.bench_function("bench_from_array_1000", |b| {
+        b.iter(|| {
+            let deq: VecDeque<_> = array.into();
+            black_box(deq);
+        })
+    });
+
     let mut ring: VecDeque<u8> = VecDeque::with_capacity(1000);
     let input: &[u8] = &[128; 512];
     c.bench_function("bench_extend_bytes", |b| {
