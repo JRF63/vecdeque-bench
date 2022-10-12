@@ -46,6 +46,52 @@ fn criterion_benchmarks(c: &mut Criterion) {
     c.bench_function("bench_try_fold", |b| {
         b.iter(|| black_box(ring.iter().try_fold(0, |a, b| Some(a + b))))
     });
+
+    let mut ring: VecDeque<u8> = VecDeque::with_capacity(1000);
+    let input: &[u8] = &[128; 512];
+    c.bench_function("bench_extend_bytes", |b| {
+        b.iter(|| {
+            ring.clear();
+            ring.extend(black_box(input));
+        })
+    });
+
+    let mut ring: VecDeque<u8> = VecDeque::with_capacity(1000);
+    let input = vec![128; 512];
+    c.bench_function("bench_extend_vec", |b| {
+        b.iter(|| {
+            ring.clear();
+
+            let input = input.clone();
+            ring.extend(black_box(input));
+        })
+    });
+
+    let mut ring: VecDeque<u16> = VecDeque::with_capacity(1000);
+    c.bench_function("bench_extend_trustedlen", |b| {
+        b.iter(|| {
+            ring.clear();
+            ring.extend(black_box(0..512));
+        })
+    });
+
+    let mut ring: VecDeque<u16> = VecDeque::with_capacity(1000);
+    c.bench_function("bench_extend_chained_trustedlen", |b| {
+        b.iter(|| {
+            ring.clear();
+            ring.extend(black_box((0..256).chain(768..1024)));
+        })
+    });
+
+    let mut ring: VecDeque<u16> = VecDeque::with_capacity(1000);
+    let input1: &[u16] = &[128; 256];
+    let input2: &[u16] = &[255; 256];
+    c.bench_function("bench_extend_chained_bytes", |b| {
+        b.iter(|| {
+            ring.clear();
+            ring.extend(black_box(input1.iter().chain(input2.iter())));
+        })
+    });
 }
 
 criterion_group!(benches, criterion_benchmarks);
