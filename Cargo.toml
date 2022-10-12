@@ -1,0 +1,11 @@
+[package]
+name = "vecdeque-bench"
+version = "0.1.0"
+edition = "2021"
+
+[dev-dependencies]
+criterion = "0.3"
+
+[[bench]]
+name = "benchmark"
+harness = false
